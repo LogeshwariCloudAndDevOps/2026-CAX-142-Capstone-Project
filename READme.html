@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>StockSense AI – Capstone Project Proposal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0f0d;
+    --surface: #101810;
+    --card: #141f17;
+    --border: #1e3325;
+    --accent: #00ff88;
+    --accent-dim: #00cc6a;
+    --accent-glow: rgba(0,255,136,0.12);
+    --gold: #f5c842;
+    --red: #ff4d6a;
+    --text: #e8f0eb;
+    --muted: #6b8c76;
+    --mono: 'IBM Plex Mono', monospace;
+    --serif: 'Playfair Display', serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Grid noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 80px;
+    margin-bottom: 80px;
+  }
+
+  .badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .badge::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(42px, 7vw, 80px);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  h1 span {
+    color: var(--accent);
+  }
+
+  .subtitle {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 48px;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 48px;
+    max-width: 600px;
+  }
+  .meta-item {
+    background: var(--card);
+    padding: 20px 24px;
+  }
+  .meta-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .meta-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    margin-bottom: 72px;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label .num {
+    color: var(--muted);
+  }
+
+  h2 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 28px;
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    margin-top: 32px;
+  }
+
+  p {
+    color: #a8c4b0;
+    font-size: 15.5px;
+    margin-bottom: 16px;
+    max-width: 720px;
+  }
+
+  /* ── PROBLEM CALLOUT ── */
+  .callout {
+    background: var(--accent-glow);
+    border-left: 3px solid var(--accent);
+    padding: 24px 28px;
+    margin: 28px 0;
+    border-radius: 0 4px 4px 0;
+  }
+  .callout p {
+    color: var(--text);
+    font-size: 15px;
+    margin: 0;
+  }
+  .callout strong { color: var(--accent); }
+
+  /* ── STAT ROW ── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 32px 0;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 24px;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+  .stat-num {
+    font-family: var(--mono);
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ── ARCHITECTURE / SOLUTION TABLE ── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 28px 0;
+  }
+  .feature-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    position: relative;
+  }
+  .feature-icon {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+  .feature-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    margin-bottom: 8px;
+  }
+  .feature-desc {
+    font-size: 14px;
+    color: #8aaa96;
+    line-height: 1.6;
+    margin: 0;
+    max-width: none;
+  }
+
+  /* ── AI PIPELINE ── */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 28px 0;
+  }
+  .pipe-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    position: relative;
+  }
+  .pipe-step:first-child { border-radius: 4px 4px 0 0; }
+  .pipe-step:last-child  { border-radius: 0 0 4px 4px; }
+  .pipe-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    background: var(--accent-glow);
+    border: 1px solid var(--border);
+    padding: 4px 8px;
+    min-width: 36px;
+    text-align: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .pipe-content h4 {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+  .pipe-content p {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin: 0;
+    max-width: none;
+  }
+
+  /* ── TECH STACK ── */
+  .tech-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 20px 0;
+  }
+  .tech-tag {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent-dim);
+    border: 1px solid var(--border);
+    background: var(--card);
+    padding: 6px 14px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+  }
+  .tech-tag.gold { color: var(--gold); border-color: rgba(245,200,66,0.3); }
+  .tech-tag.red  { color: var(--red);  border-color: rgba(255,77,106,0.3); }
+
+  /* ── TIMELINE ── */
+  .timeline {
+    margin: 28px 0;
+    border-left: 1px solid var(--border);
+    padding-left: 28px;
+  }
+  .tl-item {
+    position: relative;
+    padding-bottom: 28px;
+  }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -33px;
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+  }
+  .tl-phase {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .tl-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .tl-desc {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: none;
+    margin: 0;
+  }
+
+  /* ── RISKS TABLE ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 14px;
+  }
+  thead tr {
+    background: var(--card);
+    border-bottom: 1px solid var(--accent);
+  }
+  thead th {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: 14px 16px;
+    text-align: left;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr:hover { background: var(--card); }
+  tbody td {
+    padding: 14px 16px;
+    color: #8aaa96;
+    vertical-align: top;
+  }
+  tbody td:first-child { color: var(--text); font-weight: 500; }
+
+  /* ── FOOTER ── */
+  .doc-footer {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-brand {
+    font-family: var(--serif);
+    font-size: 20px;
+    color: var(--accent);
+  }
+  .footer-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    margin: 48px 0;
+    opacity: 0.4;
+  }
+
+  @media print {
+    body { background: white; color: #111; }
+    body::before { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══════════════════════════════════════
+       COVER
+  ══════════════════════════════════════ -->
+  <div class="cover">
+    <div class="badge">Capstone Project Proposal &nbsp;·&nbsp; AI Application Development</div>
+
+    <h1>Stock<span>Sense</span> AI</h1>
+    <div class="subtitle">An Intelligent Stock Selection &amp; Market Analysis Platform</div>
+
+    <p style="max-width:640px; font-size:16px; color:#8aaa96; line-height:1.8;">
+      A full-stack, AI-powered application that synthesises fundamental and technical
+      analysis to guide retail investors toward informed, data-driven investment decisions
+      in equity markets.
+    </p>
+
+    <div class="meta-grid">
+      <div class="meta-item">
+        <div class="meta-label">Project Type</div>
+        <div class="meta-value">Capstone — AI Application</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Domain</div>
+        <div class="meta-value">FinTech / Capital Markets</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Duration</div>
+        <div class="meta-value">16 Weeks</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       1. EXECUTIVE SUMMARY
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label"><span class="num">01 /</span> Executive Summary</div>
+    <h2>The Big Picture</h2>
+    <p>
+      StockSense AI is a capstone project to build an AI-powered web application that empowers
+      retail investors to evaluate publicly traded stocks through both <strong style="color:var(--text)">fundamental analysis</strong>
+      (financial health, valuation, growth) and <strong style="color:var(--text)">technical analysis</strong>
+      (price patterns, momentum, volume signals). The platform uses large language models,
+      machine learning, and real-time market data APIs to surface actionable intelligence
+      that previously required institutional-grade tools or professional analysts.
+    </p>
+    <p>
+      The outcome is a single, conversational interface that accepts a stock ticker, autonomously
+      retrieves and analyses all relevant data, and returns a structured investment report with a
+      clear AI-generated recommendation backed by quantitative evidence.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════
+       2. PROBLEM STATEMENT
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label"><span class="num">02 /</span> Problem Statement</div>
+    <h2>Why This Problem Matters</h2>
+
+    <div class="callout">
+      <p>
+        <strong>Core Problem:</strong> Retail investors lack access to the tools, data pipelines,
+        and analytical expertise needed to perform rigorous stock analysis before making investment
+        decisions — leading to emotionally driven or uninformed trades that erode wealth.
+      </p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-num">~58%</div>
+        <div class="stat-desc">of retail investors report making investment decisions based primarily on news headlines or social media sentiment</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">200+</div>
+        <div class="stat-desc">financial metrics exist across fundamentals and technicals — too many for a non-expert to process manually</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">$50K+</div>
+        <div class="stat-desc">per year is the typical cost of institutional Bloomberg / FactSet terminal access — out of reach for retail investors</div>
+      </div>
+    </div>
+
+    <h3>Specific Pain Points</h3>
+    <p><strong style="color:var(--text)">1. Information overload.</strong> A single stock generates hundreds of data points — earnings reports, SEC filings, price charts, analyst ratings, news — scattered across dozens of sources. Synthesising this manually is infeasible for an individual investor.</p>
+    <p><strong style="color:var(--text)">2. Domain expertise gap.</strong> Concepts like P/E ratio, MACD crossovers, RSI divergence, DCF valuation, and debt-to-equity ratios require significant financial literacy that most retail investors simply don't have.</p>
+    <p><strong style="color:var(--text)">3. Emotional bias in decision-making.</strong> Without an objective, data-driven framework, investors over-weight recent performance (recency bias) and news sentiment, leading to buy-high-sell-low behaviour.</p>
+    <p><strong style="color:var(--text)">4. No unified analysis platform.</strong> Investors must context-switch between charting platforms, financial news aggregators, SEC EDGAR, and spreadsheet models — there is no single tool that unifies the full workflow.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════
+       3. PROPOSED SOLUTION
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label"><span class="num">03 /</span> Proposed AI Solution</div>
+    <h2>How StockSense AI Solves It</h2>
+
+    <p>
+      The application follows an <strong style="color:var(--text)">AI Agent architecture</strong> where a central LLM orchestrates
+      specialised analysis modules. A user inputs a stock ticker; the system autonomously invokes
+      multiple tools, synthesises their outputs, and delivers a structured report — all within
+      seconds.
+    </p>
+
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pipe-num">01</div>
+        <div class="pipe-content">
+          <h4>User Intent &amp; Stock Ingestion</h4>
+          <p>User enters ticker symbol (e.g. AAPL, TSLA). The system resolves company metadata and routes to the appropriate data pipelines.</p>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">02</div>
+        <div class="pipe-content">
+          <h4>Fundamental Analysis Module</h4>
+          <p>Pulls financial statements (income, balance sheet, cash flow), computes key ratios (P/E, P/B, EV/EBITDA, ROE, Debt/Equity), performs DCF valuation, and compares against sector peers.</p>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">03</div>
+        <div class="pipe-content">
+          <h4>Technical Analysis Module</h4>
+          <p>Fetches OHLCV price data. Computes indicators: Moving Averages (SMA/EMA), RSI, MACD, Bollinger Bands, Volume trends, support/resistance levels. Classifies chart patterns using ML model.</p>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">04</div>
+        <div class="pipe-content">
+          <h4>Sentiment &amp; News Intelligence</h4>
+          <p>Aggregates recent news articles, analyst reports, and social signals via web search. NLP sentiment scoring applied. Earnings call transcript key-phrase extraction.</p>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">05</div>
+        <div class="pipe-content">
+          <h4>AI Synthesis &amp; Recommendation Engine</h4>
+          <p>LLM (Claude API) ingests all module outputs, applies investment frameworks (e.g. Value Investing, Growth, Momentum), resolves conflicting signals, and generates a plain-language investment thesis.</p>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">06</div>
+        <div class="pipe-content">
+          <h4>Structured Report Output</h4>
+          <p>Delivers: Overall Score (Bull / Neutral / Bear), Fundamental Score, Technical Score, Sentiment Score, Risk Factors, and a conversational explanation the user can interrogate further.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════
+       4. KEY FEATURES
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label"><span class="num">04 /</span> Key Features</div>
+    <h2>Core Application Capabilities</h2>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Fundamental Scorecard</div>
+        <p class="feature-desc">Automated extraction and scoring of 30+ financial metrics. Valuation multiples benchmarked against sector median. DCF intrinsic value estimate with margin of safety calculation.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <div class="feature-title">Technical Chart Analysis</div>
+        <p class="feature-desc">Interactive candlestick charts with overlaid indicators. ML-based chart pattern recognition (Head & Shoulders, Cup & Handle, etc.). Trend strength and momentum signals.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <div class="feature-title">Conversational AI Analyst</div>
+        <p class="feature-desc">Ask follow-up questions in plain English. "Why is the RSI overbought?", "How does the P/E compare to Amazon?". The AI agent responds with context-aware analysis.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📰</div>
+        <div class="feature-title">News & Sentiment Engine</div>
+        <p class="feature-desc">Real-time news aggregation with NLP sentiment scoring. Earnings call transcript summaries. Insider trading activity flags. Analyst consensus tracker.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚖️</div>
+        <div class="feature-title">Portfolio Fit Analyser</div>
+        <p class="feature-desc">Users input their portfolio; AI assesses correlation, sector concentration, beta exposure, and whether the new stock improves overall risk-adjusted returns.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-title">Investment Thesis Generator</div>
+        <p class="feature-desc">AI synthesises all signals into a structured Bear / Bull / Base case thesis. Includes specific price targets, key catalysts, and risk factors to monitor.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════
+       5. TECHNICAL ARCHITECTURE
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label"><span class="num">05 /</span> Technical Architecture</div>
+    <h2>Technology Stack</h2>
+
+    <h3>Frontend</h3>
+    <div class="tech-row">
+      <span class="tech-tag">React.js</span>
+      <span class="tech-tag">TypeScript</span>
+      <span class="tech-tag">TailwindCSS</span>
+      <span class="tech-tag">Recharts / TradingView Widget</span>
+      <span class="tech-tag">Framer Motion</span>
+    </div>
+
+    <h3>Backend / API Layer</h3>
+    <div class="tech-row">
+      <span class="tech-tag gold">Python (FastAPI)</span>
+      <span class="tech-tag gold">PostgreSQL</span>
+      <span class="tech-tag gold">Redis (caching)</span>
+      <span class="tech-tag gold">Celery (async tasks)</span>
+    </div>
+
+    <h3>AI / ML Layer</h3>
+    <div class="tech-row">
+      <span class="tech-tag">Claude API (Anthropic)</span>
+      <span class="tech-tag">LangChain / LangGraph</span>
+      <span class="tech-tag">scikit-learn (pattern recognition)</span>
+      <span class="tech-tag">HuggingFace (NLP sentiment)</span>
+      <span class="tech-tag">FAISS (vector search)</span>
+    </div>
+
+    <h3>Data Sources</h3>
+    <div class="tech-row">
+      <span class="tech-tag red">Alpha Vantage API</span>
+      <span class="tech-tag red">Yahoo Finance (yfinance)</span>
+      <span class="tech-tag red">SEC EDGAR API</span>
+      <span class="tech-tag red">NewsAPI</span>
+      <span class="tech-tag red">Financial Modeling Prep</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════
+       6. TIMELINE
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label"><span class="num">06 /</span> Project Timeline</div>
+    <h2>16-Week Delivery Plan</h2>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-phase">Phase 1 — Weeks 1–3</div>
+        <div class="tl-title">Research, Design &amp; Data Pipeline</div>
+        <p class="tl-desc">Literature review of investment analysis frameworks. API integrations for market data. Database schema design. UI/UX wireframes and user journey mapping.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">Phase 2 — Weeks 4–7</div>
+        <div class="tl-title">Fundamental Analysis Engine</div>
+        <p class="tl-desc">Build financial statement parser. Implement ratio calculations and DCF model. Sector benchmarking database. Unit tests for all financial computations.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">Phase 3 — Weeks 8–11</div>
+        <div class="tl-title">Technical Analysis &amp; ML Models</div>
+        <p class="tl-desc">Integrate price data feeds. Implement all technical indicators. Train chart pattern classification model. Build sentiment analysis NLP pipeline.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">Phase 4 — Weeks 12–14</div>
+        <div class="tl-title">AI Orchestration &amp; Frontend</div>
+        <p class="tl-desc">Integrate Claude API as the synthesis agent via LangChain. Build React frontend with interactive charts. Connect all backend services. End-to-end integration testing.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">Phase 5 — Weeks 15–16</div>
+        <div class="tl-title">Evaluation, Refinement &amp; Presentation</div>
+        <p class="tl-desc">Backtesting AI recommendations against historical data. User testing with 5 participants. Performance tuning. Final documentation and capstone presentation.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════
+       7. ETHICAL CONSIDERATIONS & RISKS
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label"><span class="num">07 /</span> Risk &amp; Ethics</div>
+    <h2>Responsible AI in Finance</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Risk</th>
+          <th>Mitigation Strategy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>AI Hallucination of Financial Metrics</td>
+          <td>All financial data sourced from APIs, not AI generation. LLM only reasons over verified data. Outputs include source citations.</td>
+        </tr>
+        <tr>
+          <td>Misleading Investment Advice</td>
+          <td>Clear disclaimers throughout UI: "Not financial advice." Users are shown raw data supporting every claim. Recommendation framed as research aid, not directive.</td>
+        </tr>
+        <tr>
+          <td>Data API Rate Limits / Downtime</td>
+          <td>Redis caching for recent queries. Fallback to secondary data providers. Graceful degradation messaging.</td>
+        </tr>
+        <tr>
+          <td>Model Bias toward Recent Market Regimes</td>
+          <td>Multi-timeframe analysis (1M, 3M, 1Y, 5Y). Explicit disclosure of model training period. Human-interpretable explanations for every signal.</td>
+        </tr>
+        <tr>
+          <td>Privacy &amp; Data Security</td>
+          <td>No user portfolio data stored without consent. JWT authentication. Data encrypted at rest. GDPR-aligned data handling.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════
+       8. SUCCESS METRICS
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label"><span class="num">08 /</span> Success Metrics</div>
+    <h2>How We Measure Success</h2>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-num">&gt;80%</div>
+        <div class="stat-desc">User accuracy in understanding fundamental ratios after using the AI explanations (pre/post quiz)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">&lt;8s</div>
+        <div class="stat-desc">End-to-end report generation time from ticker input to full structured output</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">≥70%</div>
+        <div class="stat-desc">Backtesting hit rate — AI "Buy" signals aligning with positive 3-month forward returns in historical data</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════
+       9. CONCLUSION
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label"><span class="num">09 /</span> Conclusion</div>
+    <h2>The Value Proposition</h2>
+    <p>
+      StockSense AI bridges the gap between institutional-grade investment analysis and the
+      individual retail investor. By combining the structured rigour of fundamental and technical
+      analysis with the reasoning and language capabilities of modern AI, the platform democratises
+      a workflow that has historically been locked behind expensive terminals and years of
+      financial training.
+    </p>
+    <p>
+      As a capstone project, it demonstrates end-to-end proficiency in AI agent architecture,
+      API integration, machine learning, financial domain modelling, and full-stack application
+      development — culminating in a product with clear real-world utility and a defensible
+      technical foundation.
+    </p>
+
+    <div class="callout" style="margin-top:32px;">
+      <p>
+        <strong>Mission:</strong> To give every retail investor the analytical power of a professional
+        equity researcher — powered by AI, grounded in data, and explained in plain language.
+      </p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <div class="footer-brand">StockSense AI</div>
+    <div class="footer-meta">
+      Capstone Project Proposal<br>
+      AI Application Development · 2026
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
