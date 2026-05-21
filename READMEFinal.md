@@ -2,6 +2,11 @@ Capstone project proposal — **StockSense AI**. Here's a breakdown of what's co
 ---
 
 ### What's in the Proposal
+**core pain point (section 01)**
+
+Most retail investors enter the stock market without the knowledge, discipline, tools, or emotional control needed to make consistently profitable decisions.
+
+Despite increasing participation in the stock market, a large percentage of retail investors fail to generate sustainable profits due to limited financial knowledge, emotional decision-making, information overload, and lack of intelligent analytical tools. This creates a need for an AI-powered system that can analyze market data, evaluate stock fundamentals and technical indicators, and provide data-driven insights to support better investment decisions.
 
 **Problem Statement (Section 02)**
 The core argument: retail investors lack the tools, expertise, and data pipelines to perform rigorous stock analysis, leading to emotionally-driven, uninformed trades. Three sharp pain points are called out — information overload, the domain expertise gap, and emotional bias — backed by illustrative statistics.
