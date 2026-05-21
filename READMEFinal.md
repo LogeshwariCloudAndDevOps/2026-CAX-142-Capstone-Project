@@ -36,7 +36,7 @@ Addresses hallucination risk, financial advice disclaimers, data privacy, model 
 
 2-week implementation plan for stock market trading application using the aaproved tech stack.Perfect! A comprehensive **2-Week Implementation Plan** for the StockSense AI capstone project. Here's what the document contains:
 
-## 📋 Document Overview
+##  Document Overview
 
 **Structured Implementation Plan with:**
 
@@ -52,7 +52,7 @@ Addresses hallucination risk, financial advice disclaimers, data privacy, model 
 - **Days 10-11:** Testing suite with pytest, comprehensive documentation
 - **Days 12-14:** Performance optimization, user testing, demo preparation, final presentation
 
-## 🛠️ Approved Tech Stack Included
+##  Approved Tech Stack Included
 
 The plan uses **only approved tools** from your requirements:
 - **Python with uv** for package management
@@ -64,7 +64,7 @@ The plan uses **only approved tools** from your requirements:
 - **scikit-learn** for ML models
 - **yfinance + Alpha Vantage** for free market data
 
-## ✅ Key Features
+##  Key Features
 
 Each day includes:
 - ☐ **Checkbox task lists** for tracking progress
