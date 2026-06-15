@@ -1,0 +1,19 @@
+Your macOS implementation guide is ready. Here is a summary of every change made from the Windows version:
+Shell & commands
+
+All PowerShell references replaced with Terminal (zsh)
+New-Item → touch for creating empty files
+mkdir src\stocksense\data → mkdir -p src/stocksense/data (forward slashes, -p flag)
+irm https://...| iex → curl -LsSf https://astral.sh/uv/install.sh | sh
+After installing uv: source ~/.zshrc instead of reopening PowerShell
+Interpreter path: .\.venv\Scripts\python.exe → .venv/bin/python
+
+macOS-specific additions
+
+.DS_Store added to .gitignore
+Ollama install: drag .app into Applications, menu bar llama icon explained
+Apple Silicon callout: Ollama uses Metal GPU acceleration — LLM inference is fast on M1/M2/M3/M4
+Keyboard shortcuts updated: Ctrl+Shift+X → ⌘+Shift+X, Ctrl+Shift+P → ⌘+Shift+P
+Stop commands: Control+C (not Ctrl+C)
+
+Everything else — all the Python code, pyproject.toml, architecture diagram, SOLID table, and rubric checklist — is identical since Python and uv are fully cross-platform.
